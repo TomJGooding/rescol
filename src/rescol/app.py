@@ -253,6 +253,6 @@ class ResistorColorCodeApp(App):
         value_label.value = event.value
 
 
-if __name__ == "__main__":
+def run() -> None:
     app = ResistorColorCodeApp()
     app.run()
