@@ -5,7 +5,6 @@ from enum import Enum
 from textual import on
 from textual.app import App, ComposeResult
 from textual.containers import Center, Horizontal, VerticalGroup
-from textual.message import Message
 from textual.reactive import reactive
 from textual.widget import Widget
 from textual.widgets import Input, Label, Select, Static
@@ -89,19 +88,8 @@ class Band(Static):
 
     value = reactive(ColorCode.BLACK)
 
-    class Changed(Message):
-        def __init__(self, band: Band, value: ColorCode) -> None:
-            super().__init__()
-            self.value: ColorCode = value
-            self.band: Band = band
-
-        @property
-        def control(self) -> Band:
-            return self.band
-
-    def watch_value(self, value: ColorCode) -> None:
+    def watch_value(self) -> None:
         self.styles.background = self.value.name.lower()
-        self.post_message(self.Changed(self, value))
 
 
 class ToleranceBand(Static):
