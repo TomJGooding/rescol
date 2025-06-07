@@ -109,20 +109,15 @@ class Resistor(Widget):
         layout: horizontal;
         height: 5;
         width: 35;
+        padding: 0 2;
         background: #e1bc7b;
-    }
-
-    Resistor #value-bands {
-        width: 24;
-        margin: 0 2;
     }
     """
 
     def compose(self) -> ComposeResult:
-        with Horizontal(id="value-bands"):
-            yield Band(id="digit-one-band")
-            yield Band(id="digit-two-band")
-            yield Band(id="multiplier-band")
+        with Horizontal():
+            for _ in range(3):
+                yield Band()
         yield ToleranceBand()
 
 
