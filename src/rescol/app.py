@@ -121,24 +121,23 @@ class Resistor(Widget):
         yield ToleranceBand()
 
 
-class ResistorValueDisplay(Widget):
+class ResistanceInput(Widget):
     DEFAULT_CSS = """
-    ResistorValueDisplay {
+    ResistanceInput {
+        layout: horizontal;
         height: auto;
         width: auto;
         margin: 1;
-        layout: horizontal;
-    }
 
-    ResistorValueDisplay Input {
-        width: 20;
-    }
+        & > Input {
+            width: 20;
+        }
 
-    ResistorValueDisplay Label {
-        width: auto;
-        height: 3;
-        content-align: center middle;
-        text-style: bold;
+        & > Label {
+            height: 3;
+            content-align: center middle;
+            text-style: bold;
+        }
     }
     """
 
@@ -166,7 +165,7 @@ class ResistorColorCodeApp(App):
         with Center():
             yield Resistor()
         with Center():
-            yield ResistorValueDisplay()
+            yield ResistanceInput()
 
     @on(BandSelect.Changed)
     def on_band_select_changed(self) -> None:
@@ -188,7 +187,7 @@ class ResistorColorCodeApp(App):
 
         value *= multiplier
 
-        resistance_input = self.query_one(ResistorValueDisplay)
+        resistance_input = self.query_one(ResistanceInput)
         resistance_input.value = value
 
 
