@@ -5,7 +5,7 @@ from enum import Enum
 from textual import on
 from textual.app import App, ComposeResult
 from textual.containers import Center, Horizontal, VerticalGroup
-from textual.reactive import reactive
+from textual.reactive import var
 from textual.widget import Widget
 from textual.widgets import Input, Label, Select, Static
 
@@ -86,7 +86,7 @@ class Band(Static):
     }
     """
 
-    value = reactive(ColorCode.BLACK)
+    value = var(ColorCode.BLACK)
 
     def watch_value(self) -> None:
         self.styles.background = self.value.name.lower()
@@ -147,7 +147,7 @@ class ResistorValueDisplay(Widget):
     }
     """
 
-    value = reactive(0, init=False)
+    value = var(0, init=False)
 
     def compose(self) -> ComposeResult:
         yield Input(str(self.value), disabled=True)
