@@ -121,6 +121,44 @@ class Resistor(Widget):
         yield ToleranceBand()
 
 
+class ResistanceUnit(Enum):
+    OHM = 1
+    KILOOHM = 1_000
+    MEGAOHM = 1_000_000
+    GIGAOHM = 1_000_000_000
+
+
+class UnitSelect(Select):
+    DEFAULT_CSS = """
+    UnitSelect {
+        width: 10;
+    }
+    """
+
+    def __init__(
+        self,
+        *,
+        name: str | None = None,
+        id: str | None = None,
+        classes: str | None = None,
+        disabled: bool = False,
+    ):
+        options = [
+            ("Ω", ResistanceUnit.OHM),
+            ("kΩ", ResistanceUnit.KILOOHM),
+            ("MΩ", ResistanceUnit.MEGAOHM),
+            ("GΩ", ResistanceUnit.GIGAOHM),
+        ]
+        super().__init__(
+            options,
+            allow_blank=False,
+            name=name,
+            id=id,
+            classes=classes,
+            disabled=disabled,
+        )
+
+
 class ResistanceInput(Widget):
     DEFAULT_CSS = """
     ResistanceInput {
@@ -132,24 +170,38 @@ class ResistanceInput(Widget):
         & > Input {
             width: 20;
         }
-
-        & > Label {
-            height: 3;
-            content-align: center middle;
-            text-style: bold;
-        }
     }
     """
 
     value = var(0, init=False)
+    """Raw resistance value in ohms"""
+
+    unit = var(ResistanceUnit.OHM, init=False)
 
     def compose(self) -> ComposeResult:
         yield Input(str(self.value), disabled=True)
-        yield Label("ohms")
+        yield UnitSelect()
+
+    def get_display_value(self) -> str:
+        display_value = self.value / self.unit.value
+        if display_value.is_integer():
+            display_value = int(display_value)
+        return str(display_value)
 
     def watch_value(self) -> None:
         input = self.query_one(Input)
-        input.value = str(self.value)
+        input.value = self.get_display_value()
+
+    def watch_unit(self) -> None:
+        input = self.query_one(Input)
+        input.value = self.get_display_value()
+
+    @on(UnitSelect.Changed)
+    def on_unit_select_changed(self, event: UnitSelect.Changed) -> None:
+        event.stop()
+        unit = event.value
+        assert isinstance(unit, ResistanceUnit)
+        self.unit = unit
 
 
 class ResistorColorCodeApp(App):
